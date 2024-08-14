@@ -30,8 +30,7 @@ os.makedirs("images", exist_ok=True)
 os.makedirs("videos", exist_ok=True)
 
 # Ensure ImageMagick is configured properly for MoviePy
-from moviepy.config import change_settings
-change_settings({"IMAGEMAGICK_BINARY": "C:\\Program Files\\ImageMagick-7.1.1-Q16-HDRI\\magick.exe"})  # Adjust path as needed
+
 
 # Function to generate text from a prompt
 def generate_text(prompt):
