@@ -162,7 +162,8 @@ def generate_video_route():
             return jsonify({"error": "Failed to create or upload the video."}), 500
     return jsonify({"error": "No topic provided."}), 400
 
-if __name__ == "__main__":
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
+
+if __name__ == '__main__':
+    # Run on port 80
+    app.run(host='0.0.0.0', port=80)
 
