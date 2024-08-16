@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE policymap [
+  <!ELEMENT policymap (policy)*>
+  <!ATTLIST policymap xmlns CDATA #FIXED ''>
+  <!ELEMENT policy EMPTY>
+  <!ATTLIST policy xmlns CDATA #FIXED '' domain NMTOKEN #REQUIRED
+    name NMTOKEN #IMPLIED pattern CDATA #IMPLIED rights NMTOKEN #IMPLIED
+    stealth NMTOKEN #IMPLIED value CDATA #IMPLIED>
+]>
+<!--
+  Configure ImageMagick policies.
+
+  Domains include system, delegate, coder, filter, path, or resource.
+  Rights include none, read, write, execute and all. Use | to combine them,
+  for example: "read | write" to permit read from, or write to, a path.
+-->
+
+<!-- Allow read and write access to all paths -->
+<policy domain="path" rights="read | write" pattern="@*" />

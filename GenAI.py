@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS  # Import CORS
+from flask_cors import CORS
 import openai
 import re
 import os
@@ -8,20 +8,21 @@ from gtts import gTTS
 from moviepy.editor import *
 import cloudinary
 import cloudinary.uploader
+from PIL import Image
 
 from api_key import API_KEY, CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+CORS(app)
 
 # Set your OpenAI API key
 openai.api_key = API_KEY
 
 # Configure Cloudinary
 cloudinary.config(
-  cloud_name=CLOUDINARY_CLOUD_NAME,
-  api_key=CLOUDINARY_API_KEY,
-  api_secret=CLOUDINARY_API_SECRET
+    cloud_name=CLOUDINARY_CLOUD_NAME,
+    api_key=CLOUDINARY_API_KEY,
+    api_secret=CLOUDINARY_API_SECRET
 )
 
 # Create necessary folders if they don't exist
@@ -30,12 +31,19 @@ os.makedirs("images", exist_ok=True)
 os.makedirs("videos", exist_ok=True)
 
 # Ensure ImageMagick is configured properly for MoviePy
+from moviepy.config import change_settings
+change_settings({"IMAGEMAGICK_BINARY": "/usr/bin/convert"})
 
+# Handle deprecated ANTIALIAS attribute
+try:
+    ANTIALIAS = Image.ANTIALIAS
+except AttributeError:
+    ANTIALIAS = Image.Resampling.LANCZOS
 
 # Function to generate text from a prompt
 def generate_text(prompt):
     print("The AI BOT is trying now to generate a new text for you...")
-    
+
     # Generate text using the GPT-3.5-turbo model in streaming mode
     stream = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
@@ -95,8 +103,11 @@ def generate_video():
             audio_clip = AudioFileClip(audio_path)
             image_clip = ImageClip(image_path).set_duration(audio_clip.duration)
 
-            # Customize the text clip
-            text_clip = TextClip(para.strip(), fontsize=50, color="white", bg_color="black")
+            # Add zoom-in effect by resizing the image over time
+            image_clip = image_clip.resize(lambda t: 1 + 0.1 * t)
+
+            # Customize the text clip with a specified font
+            text_clip = TextClip(para.strip(), fontsize=50, color="white", bg_color="black", font="DejaVu-Sans-Bold")
             text_clip = text_clip.set_pos('center').set_duration(audio_clip.duration)
 
             # Concatenate the image, text, and audio into a final video clip
@@ -166,4 +177,6 @@ def generate_video_route():
 if __name__ == '__main__':
     # Run on port 80
     app.run(host='0.0.0.0', port=80)
+
+
 
